@@ -2,18 +2,21 @@ package main
 
 import (
 	"fmt"
+	"go-practice-api/global_router"
+	"go-practice-api/handlers"
+	"go-practice-api/product"
 	"net/http"
 )
 
 func main() {
 	mux := http.NewServeMux() //router
 
-	mux.Handle("GET /products", http.HandlerFunc(getProducts))
-	mux.Handle("POST /createProducts", http.HandlerFunc(createProduct))
+	mux.Handle("GET /products", http.HandlerFunc(handlers.GetProducts))
+	mux.Handle("POST /createProducts", http.HandlerFunc(handlers.CreateProduct))
 
 	fmt.Println("Server is running on port: 8080")
 
-	globalRouter := globalRouter(mux)
+	globalRouter := global_router.GlobalRouter(mux)
 
 	err := http.ListenAndServe(":8080", globalRouter) //start server
 	if err != nil {
@@ -22,7 +25,7 @@ func main() {
 }
 
 func init() {
-	prd1 := Product{
+	prd1 := product.Product{
 		ID:          1,
 		Title:       "Orange",
 		Description: "Orange is a fruit. I love it.",
@@ -30,7 +33,7 @@ func init() {
 		ImgUrl:      "https://desime.co.uk/cdn/shop/files/orange.jpg?v=1690113703",
 	}
 
-	prd2 := Product{
+	prd2 := product.Product{
 		ID:          2,
 		Title:       "Apple",
 		Description: "Apple is a fruit. I love it.",
@@ -38,7 +41,7 @@ func init() {
 		ImgUrl:      "https://desime.co.uk/cdn/shop/files/orange.jpg?v=1690113703",
 	}
 
-	prd3 := Product{
+	prd3 := product.Product{
 		ID:          3,
 		Title:       "Banana",
 		Description: "Banana is a fruit. I love it.",
@@ -46,8 +49,8 @@ func init() {
 		ImgUrl:      "https://desime.co.uk/cdn/shop/files/orange.jpg?v=1690113703",
 	}
 
-	productsList = append(productsList, prd1)
-	productsList = append(productsList, prd2)
-	productsList = append(productsList, prd3)
+	product.ProductsList = append(product.ProductsList, prd1)
+	product.ProductsList = append(product.ProductsList, prd2)
+	product.ProductsList = append(product.ProductsList, prd3)
 
 }
