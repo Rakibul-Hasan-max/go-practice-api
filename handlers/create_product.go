@@ -3,13 +3,13 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"go-practice-api/product"
+	"go-practice-api/database"
 	"go-practice-api/utilities"
+	"net/http"
 )
 
 func CreateProduct(w http.ResponseWriter, r *http.Request) {
-	var newProduct product.Product
+	var newProduct database.Product
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&newProduct)
 	if err != nil {
@@ -18,9 +18,9 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newProduct.ID = len(product.ProductsList) + 1
+	newProduct.ID = len(database.ProductsList) + 1
 
-	product.ProductsList = append(product.ProductsList, newProduct)
+	database.ProductsList = append(database.ProductsList, newProduct)
 
 	utilities.SendData(w, newProduct, 201)
 }
