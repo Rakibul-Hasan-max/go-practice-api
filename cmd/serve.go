@@ -9,13 +9,17 @@ import (
 )
 
 func Serve() {
+	manager := middleware.NewManager()
+
+	manager.Use(middleware.Logger)
+
 	mux := http.NewServeMux() //router
 
-	mux.Handle("GET /hasan", middleware.Logger(http.HandlerFunc(handlers.Test))) //log
+	mux.Handle("GET /hasan", manager.With(http.HandlerFunc(handlers.Test))) //log
 
-	mux.Handle("GET /products", middleware.Logger(http.HandlerFunc(handlers.GetProducts)))
-	mux.Handle("POST /products", middleware.Logger(http.HandlerFunc(handlers.CreateProduct)))
-	mux.Handle("GET /products/{productID}", middleware.Logger(http.HandlerFunc(handlers.GetProductByID)))
+	mux.Handle("GET /products", manager.With(http.HandlerFunc(handlers.GetProducts)))
+	mux.Handle("POST /products", manager.With(http.HandlerFunc(handlers.CreateProduct)))
+	mux.Handle("GET /products/{productID}", manager.With(http.HandlerFunc(handlers.GetProductByID)))
 
 	globalRouter := global_router.GlobalRouter(mux)
 
