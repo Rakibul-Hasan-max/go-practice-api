@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"go-practice-api/handlers"
 	"go-practice-api/middleware"
 	"net/http"
 )
@@ -12,15 +11,11 @@ func Serve() {
 
 	manager.Use(middleware.Logger)
 
-	mux := http.NewServeMux() //router
+	mux := http.NewServeMux() // router
 
-	mux.Handle("GET /hasan", manager.With(http.HandlerFunc(handlers.Test))) //log
+	initRoutes(mux, manager) // Initialize routes
 
-	mux.Handle("GET /products", manager.With(http.HandlerFunc(handlers.GetProducts)))
-	mux.Handle("POST /products", manager.With(http.HandlerFunc(handlers.CreateProduct)))
-	mux.Handle("GET /products/{productID}", manager.With(http.HandlerFunc(handlers.GetProductByID)))
-
-	globalRouter := middleware.GlobalRouter(mux)
+	globalRouter := middleware.CorsWithPreflight(mux)
 
 	fmt.Println("Server is running on port: 8080")
 
