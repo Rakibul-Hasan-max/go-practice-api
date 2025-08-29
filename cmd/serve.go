@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"go-practice-api/global_router"
 	"go-practice-api/handlers"
 	"go-practice-api/middleware"
 	"net/http"
@@ -21,7 +20,7 @@ func Serve() {
 	mux.Handle("POST /products", manager.With(http.HandlerFunc(handlers.CreateProduct)))
 	mux.Handle("GET /products/{productID}", manager.With(http.HandlerFunc(handlers.GetProductByID)))
 
-	globalRouter := global_router.GlobalRouter(mux)
+	globalRouter := middleware.GlobalRouter(mux)
 
 	fmt.Println("Server is running on port: 8080")
 
