@@ -9,17 +9,21 @@ import (
 func Serve() {
 	manager := middleware.NewManager()
 
-	manager.Use(middleware.Logger)
+	manager.Use(
+		middleware.Preflight,
+		middleware.Cors,
+		middleware.Logger,
+	)
 
 	mux := http.NewServeMux() // router
 
-	initRoutes(mux, manager) // Initialize routes
+	wrappedMux := manager.WrapMux(mux) // wrap the mux with middleware
 
-	globalRouter := middleware.CorsWithPreflight(mux)
+	initRoutes(mux, manager) // Initialize routes
 
 	fmt.Println("Server is running on port: 8080")
 
-	err := http.ListenAndServe(":8080", globalRouter) //start server
+	err := http.ListenAndServe(":8080", wrappedMux) //start server
 	if err != nil {
 		fmt.Println("Error starting server:", err)
 	}
