@@ -2,11 +2,16 @@ package cmd
 
 import (
 	"fmt"
+	"go-practice-api/config"
 	"go-practice-api/middleware"
 	"net/http"
+	"os"
+	"strconv"
 )
 
 func Serve() {
+	cnf := config.GetConfig()
+
 	manager := middleware.NewManager()
 
 	manager.Use(
@@ -21,10 +26,13 @@ func Serve() {
 
 	initRoutes(mux, manager) // Initialize routes
 
-	fmt.Println("Server is running on port: 8080")
+	addr := ":" + strconv.Itoa(cnf.HttpPort)
 
-	err := http.ListenAndServe(":8080", wrappedMux) //start server
+	fmt.Println("Server is running on port", addr)
+
+	err := http.ListenAndServe(addr, wrappedMux) //start server
 	if err != nil {
 		fmt.Println("Error starting server:", err)
+		os.Exit(1)
 	}
 }
