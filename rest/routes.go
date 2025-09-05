@@ -1,8 +1,8 @@
-package cmd
+package rest
 
 import (
-	"go-practice-api/handlers"
-	"go-practice-api/middleware"
+	"go-practice-api/rest/handlers"
+	middleware "go-practice-api/rest/middlewares"
 	"net/http"
 )
 
