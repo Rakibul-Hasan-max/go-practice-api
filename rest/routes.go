@@ -7,14 +7,6 @@ import (
 )
 
 func initRoutes(mux *http.ServeMux, manager *middleware.Manager) {
-	//log
-	mux.Handle(
-		"GET /hasan",
-		manager.With(
-			http.HandlerFunc(handlers.Test),
-		),
-	)
-
 	mux.Handle(
 		"GET /products",
 		manager.With(
