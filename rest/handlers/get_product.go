@@ -7,16 +7,16 @@ import (
 	"strconv"
 )
 
-func GetProductByID(w http.ResponseWriter, r *http.Request) {
-	productID := r.PathValue("productID")
+func GetProduct(w http.ResponseWriter, r *http.Request) {
+	productID := r.PathValue("id")
 
-	pID, err := strconv.Atoi(productID) // Use pID to retrieve the product from the database
+	pId, err := strconv.Atoi(productID) // Use pID to retrieve the product from the database
 	if err != nil {
 		http.Error(w, "Invalid product ID", 400)
 		return
 	}
 
-	product := database.Get(pID)
+	product := database.Get(pId)
 	if product == nil {
 		utilities.SendError(w, 404, "Product not found")
 		return
