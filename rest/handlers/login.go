@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"go-practice-api/config"
 	"go-practice-api/database"
 	"go-practice-api/utilities"
 	"net/http"
@@ -29,5 +30,18 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utilities.SendData(w, usr, http.StatusOK)
+	cnf := config.GetConfig()
+
+	accessToken, err := utilities.CreateJwt(cnf.JwtSecretKey, utilities.Payload{
+		Sub:       usr.ID,
+		FirstName: usr.FirstName,
+		LastName:  usr.LastName,
+		Email:     usr.Email,
+	})
+	if err != nil {
+		http.Error(w, "Failed to generate token", http.StatusInternalServerError)
+		return
+	}
+
+	utilities.SendData(w, accessToken, http.StatusOK)
 }
