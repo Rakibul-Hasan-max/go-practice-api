@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go-practice-api/config"
 	"go-practice-api/rest/handlers/product"
+	"go-practice-api/rest/handlers/review"
 	"go-practice-api/rest/handlers/user"
 	middleware "go-practice-api/rest/middlewares"
 	"net/http"
@@ -12,20 +13,27 @@ import (
 )
 
 type Server struct {
+	cnf            config.Config
 	productHandler *product.Handler
 	userHandler    *user.Handler
+	reviewHandler  *review.Handler
 }
 
-func NewServer(productHandler *product.Handler,
+func NewServer(
+	cnf config.Config,
+	productHandler *product.Handler,
 	userHandler *user.Handler,
+	reviewHandler *review.Handler,
 ) *Server {
 	return &Server{
+		cnf:            cnf,
 		productHandler: productHandler,
 		userHandler:    userHandler,
+		reviewHandler:  reviewHandler,
 	}
 }
 
-func (server *Server) Start(cnf config.Config) {
+func (server *Server) Start() {
 	manager := middleware.NewManager()
 
 	manager.Use(
@@ -40,8 +48,9 @@ func (server *Server) Start(cnf config.Config) {
 
 	server.productHandler.RegisterRoutes(mux, manager)
 	server.userHandler.RegisterRoutes(mux, manager)
+	server.reviewHandler.RegisterRoutes(mux, manager)
 
-	addr := ":" + strconv.Itoa(cnf.HttpPort)
+	addr := ":" + strconv.Itoa(server.cnf.HttpPort)
 
 	fmt.Println("Server is running on port", addr)
 

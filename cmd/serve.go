@@ -4,6 +4,7 @@ import (
 	"go-practice-api/config"
 	"go-practice-api/rest"
 	"go-practice-api/rest/handlers/product"
+	"go-practice-api/rest/handlers/review"
 	"go-practice-api/rest/handlers/user"
 )
 
@@ -12,7 +13,13 @@ func Serve() {
 
 	productHandler := product.NewHandler()
 	userHandler := user.NewHandler()
+	reviewHandler := review.NewHandler()
 
-	server := rest.NewServer(productHandler, userHandler)
-	server.Start(cnf)
+	server := rest.NewServer(
+		cnf,
+		productHandler,
+		userHandler,
+		reviewHandler,
+	)
+	server.Start()
 }

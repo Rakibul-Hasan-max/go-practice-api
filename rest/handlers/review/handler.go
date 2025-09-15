@@ -1,4 +1,4 @@
-package user
+package review
 
 type Handler struct{}
 
