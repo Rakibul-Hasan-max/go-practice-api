@@ -3,13 +3,29 @@ package rest
 import (
 	"fmt"
 	"go-practice-api/config"
+	"go-practice-api/rest/handlers/product"
+	"go-practice-api/rest/handlers/user"
 	middleware "go-practice-api/rest/middlewares"
 	"net/http"
 	"os"
 	"strconv"
 )
 
-func Start(cnf config.Config) {
+type Server struct {
+	productHandler *product.Handler
+	userHandler    *user.Handler
+}
+
+func NewServer(productHandler *product.Handler,
+	userHandler *user.Handler,
+) *Server {
+	return &Server{
+		productHandler: productHandler,
+		userHandler:    userHandler,
+	}
+}
+
+func (server *Server) Start(cnf config.Config) {
 	manager := middleware.NewManager()
 
 	manager.Use(
@@ -22,7 +38,8 @@ func Start(cnf config.Config) {
 
 	wrappedMux := manager.WrapMux(mux) // wrap the mux with middleware
 
-	initRoutes(mux, manager) // Initialize routes
+	server.productHandler.RegisterRoutes(mux, manager)
+	server.userHandler.RegisterRoutes(mux, manager)
 
 	addr := ":" + strconv.Itoa(cnf.HttpPort)
 
