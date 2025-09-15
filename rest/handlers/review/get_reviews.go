@@ -7,5 +7,5 @@ import (
 )
 
 func (h *Handler) GetReviews(w http.ResponseWriter, r *http.Request) {
-	utilities.SendData(w, database.List(), 200)
+	utilities.SendData(w, database.ListReviews(), 200)
 }
