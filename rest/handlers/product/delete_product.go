@@ -1,7 +1,7 @@
 package product
 
 import (
-	"go-practice-api/database"
+	"fmt"
 	"go-practice-api/utilities"
 	"net/http"
 	"strconv"
@@ -12,11 +12,17 @@ func (h *Handler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 
 	pId, err := strconv.Atoi(productID) // Use pID to retrieve the product from the database
 	if err != nil {
-		http.Error(w, "Invalid product ID", 400)
+		fmt.Println(err)
+		utilities.SendError(w, http.StatusBadRequest, "Invalid product ID")
 		return
 	}
 
-	database.Delete(pId)
+	err = h.productRepo.Delete(pId)
+	if err != nil {
+		fmt.Println(err)
+		utilities.SendError(w, http.StatusInternalServerError, "Internal Server Error")
+		return
+	}
 
-	utilities.SendData(w, "Successfully deleted product", 200)
+	utilities.SendData(w, http.StatusOK, "Successfully deleted product")
 }

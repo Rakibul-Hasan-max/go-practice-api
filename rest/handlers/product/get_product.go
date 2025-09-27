@@ -1,7 +1,6 @@
 package product
 
 import (
-	"go-practice-api/database"
 	"go-practice-api/utilities"
 	"net/http"
 	"strconv"
@@ -12,15 +11,20 @@ func (h *Handler) GetProduct(w http.ResponseWriter, r *http.Request) {
 
 	pId, err := strconv.Atoi(productID) // Use pID to retrieve the product from the database
 	if err != nil {
-		http.Error(w, "Invalid product ID", 400)
+		utilities.SendError(w, http.StatusBadRequest, "Invalid req body")
 		return
 	}
 
-	product := database.Get(pId)
+	product, err := h.productRepo.Get(pId)
+	if err != nil {
+		utilities.SendError(w, http.StatusInternalServerError, "Internal Server Error")
+		return
+	}
+
 	if product == nil {
-		utilities.SendError(w, 404, "Product not found")
+		utilities.SendError(w, http.StatusNotFound, "Product not found")
 		return
 	}
 
-	utilities.SendData(w, product, 200)
+	utilities.SendData(w, http.StatusOK, product)
 }

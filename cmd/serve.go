@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"go-practice-api/config"
+	"go-practice-api/repo"
 	"go-practice-api/rest"
 	"go-practice-api/rest/handlers/product"
 	"go-practice-api/rest/handlers/review"
@@ -12,10 +13,13 @@ import (
 func Serve() {
 	cnf := config.GetConfig()
 
+	productRepo := repo.NewProductRepo()
+	userRepo := repo.NewUserRepo()
+
 	middlewares := middleware.NewMiddlewares(cnf)
 
-	productHandler := product.NewHandler(middlewares)
-	userHandler := user.NewHandler()
+	productHandler := product.NewHandler(middlewares, productRepo)
+	userHandler := user.NewHandler(cnf, userRepo)
 	reviewHandler := review.NewHandler()
 
 	server := rest.NewServer(

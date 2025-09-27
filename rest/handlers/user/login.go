@@ -3,8 +3,6 @@ package user
 import (
 	"encoding/json"
 	"fmt"
-	"go-practice-api/config"
-	"go-practice-api/database"
 	"go-practice-api/utilities"
 	"net/http"
 )
@@ -15,24 +13,22 @@ type ReqLogin struct {
 }
 
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
-	var reqLogin ReqLogin
+	var req ReqLogin
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&reqLogin)
+	err := decoder.Decode(&req)
 	if err != nil {
 		fmt.Println(err)
-		http.Error(w, "Invalid request data", http.StatusBadRequest)
+		utilities.SendError(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
-	usr := database.Find(reqLogin.Email, reqLogin.Password)
-	if usr == nil {
-		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
+	usr, err := h.userRepo.Find(req.Email, req.Password)
+	if err != nil {
+		utilities.SendError(w, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
 
-	cnf := config.GetConfig()
-
-	accessToken, err := utilities.CreateJwt(cnf.JwtSecretKey, utilities.Payload{
+	accessToken, err := utilities.CreateJwt(h.cnf.JwtSecretKey, utilities.Payload{
 		Sub:       usr.ID,
 		FirstName: usr.FirstName,
 		LastName:  usr.LastName,
@@ -43,5 +39,5 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utilities.SendData(w, accessToken, http.StatusOK)
+	utilities.SendData(w, http.StatusOK, accessToken)
 }
