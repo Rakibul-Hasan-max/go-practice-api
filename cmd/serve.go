@@ -6,10 +6,11 @@ import (
 	"go-practice-api/infra/db"
 	"go-practice-api/repo"
 	"go-practice-api/rest"
-	"go-practice-api/rest/handlers/product"
+	prdcthandler "go-practice-api/rest/handlers/product"
 	"go-practice-api/rest/handlers/review"
-	"go-practice-api/rest/handlers/user"
+	usrHandler "go-practice-api/rest/handlers/user"
 	middleware "go-practice-api/rest/middlewares"
+	"go-practice-api/user"
 	"os"
 )
 
@@ -28,13 +29,17 @@ func Serve() {
 		os.Exit(1)
 	}
 
+	// repos
 	productRepo := repo.NewProductRepo(dbCon)
 	userRepo := repo.NewUserRepo(dbCon)
 
+	// domains
+	usrSvc := user.NewService(userRepo)
+
 	middlewares := middleware.NewMiddlewares(cnf)
 
-	productHandler := product.NewHandler(middlewares, productRepo)
-	userHandler := user.NewHandler(cnf, userRepo)
+	productHandler := prdcthandler.NewHandler(middlewares, productRepo)
+	userHandler := usrHandler.NewHandler(cnf, usrSvc)
 	reviewHandler := review.NewHandler()
 
 	server := rest.NewServer(
