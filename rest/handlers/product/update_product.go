@@ -3,7 +3,7 @@ package product
 import (
 	"encoding/json"
 	"fmt"
-	"go-practice-api/repo"
+	"go-practice-api/domain"
 	"go-practice-api/utilities"
 	"net/http"
 	"strconv"
@@ -34,7 +34,7 @@ func (h *Handler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = h.productRepo.Update(repo.Product{
+	_, err = h.svc.Update(domain.Product{
 		ID:          pId,
 		Title:       req.Title,
 		Description: req.Description,

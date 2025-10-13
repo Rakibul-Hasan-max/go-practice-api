@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go-practice-api/config"
 	"go-practice-api/infra/db"
+	"go-practice-api/product"
 	"go-practice-api/repo"
 	"go-practice-api/rest"
 	prdcthandler "go-practice-api/rest/handlers/product"
@@ -35,10 +36,11 @@ func Serve() {
 
 	// domains
 	usrSvc := user.NewService(userRepo)
+	prdctSvc := product.NewService(productRepo)
 
 	middlewares := middleware.NewMiddlewares(cnf)
 
-	productHandler := prdcthandler.NewHandler(middlewares, productRepo)
+	productHandler := prdcthandler.NewHandler(middlewares, prdctSvc)
 	userHandler := usrHandler.NewHandler(cnf, usrSvc)
 	reviewHandler := review.NewHandler()
 
