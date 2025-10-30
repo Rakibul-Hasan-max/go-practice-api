@@ -1,19 +1,10 @@
 package product
 
 import (
-	"go-practice-api/domain"
 	"go-practice-api/utilities"
 	"net/http"
 	"strconv"
 )
-
-type Pagination struct {
-	Data       []*domain.Product `json:"data"`
-	Page       int64             `json:"page"`
-	Limit      int64             `json:"limit"`
-	TotalItems int64             `json:"totalItems"`
-	TotalPages int64             `json:"totalPages"`
-}
 
 func (h *Handler) GetProducts(w http.ResponseWriter, r *http.Request) {
 	// get query parameters
@@ -47,13 +38,5 @@ func (h *Handler) GetProducts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	paginatedData := Pagination{
-		Data:  productList,
-		Page:  page,
-		Limit: limit,
-		TotalItems: cnt,
-		TotalPages: (cnt + limit - 1) / limit,
-	}
-
-	utilities.SendData(w, http.StatusOK, paginatedData)
+	utilities.SendPage(w, productList, page, limit, cnt)
 }
