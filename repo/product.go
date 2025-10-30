@@ -94,6 +94,20 @@ func (r *productRepo) List(page, limit int64) ([]*domain.Product, error) {
 	return prdList, nil
 }
 
+func (r *productRepo) Count() (int64, error) {
+	query := `
+		SELECT
+			COUNT(*)
+		from products
+	`
+	var count int64
+	err := r.db.QueryRow(query).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 func (r *productRepo) Update(p domain.Product) (*domain.Product, error) {
 	query := `
 		UPDATE products 
