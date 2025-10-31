@@ -40,3 +40,95 @@ func (h *Handler) GetProducts(w http.ResponseWriter, r *http.Request) {
 
 	utilities.SendPage(w, productList, page, limit, cnt)
 }
+
+// ===================Go routines and waitgroups added===================
+
+// package product
+
+// import (
+// 	"fmt"
+// 	"go-practice-api/utilities"
+// 	"net/http"
+// 	"strconv"
+// 	"sync"
+// )
+
+// var cnt int64
+
+// func (h *Handler) GetProducts(w http.ResponseWriter, r *http.Request) {
+// 	// get query parameters
+// 	// get page from query parameters
+// 	// get limit from query parameters
+
+// 	reqQuery := r.URL.Query()
+
+// 	pageAsStr := reqQuery.Get("page")
+// 	limitAsStr := reqQuery.Get("limit")
+
+// 	page, _ := strconv.ParseInt(pageAsStr, 10, 32)
+// 	limit, _ := strconv.ParseInt(limitAsStr, 10, 32)
+
+// 	if page <= 0 {
+// 		page = 1
+// 	}
+// 	if limit <= 0 {
+// 		limit = 10
+// 	}
+
+// 	productList, err := h.svc.List(page, limit)
+// 	if err != nil {
+// 		utilities.SendError(w, http.StatusInternalServerError, "Internal Server Error")
+// 		return
+// 	}
+
+// 	// getting count in a separate go routine
+// 	var wg sync.WaitGroup
+
+// 	wg.Add(1)
+// 	func() {
+// 		defer wg.Done()
+
+// 		cnt1, err := h.svc.Count()
+// 		if err != nil {
+// 			utilities.SendError(w, http.StatusInternalServerError, "Internal Server Error")
+// 			return
+// 		}
+
+// 		cnt = cnt1
+// 	}()
+
+// 	// demo to show go routines and waitgroups
+// 	// calling count function two more times concurrently
+
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+
+// 		cnt2, err := h.svc.Count()
+// 		if err != nil {
+// 			utilities.SendError(w, http.StatusInternalServerError, "Internal Server Error")
+// 			return
+// 		}
+
+// 		fmt.Println(cnt2)
+// 	}()
+
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+
+// 		cnt3, err := h.svc.Count()
+// 		if err != nil {
+// 			utilities.SendError(w, http.StatusInternalServerError, "Internal Server Error")
+// 			return
+// 		}
+
+// 		fmt.Println(cnt3)
+// 	}()
+
+// 	// time.Sleep(1 * time.Second)   // without waitgroup it will need this sleep to wait for go routines to finish
+
+// 	wg.Wait() // wait for all go routines to finish
+
+// 	utilities.SendPage(w, productList, page, limit, cnt)
+// }
