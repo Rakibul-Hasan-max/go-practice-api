@@ -41,7 +41,7 @@ func (h *Handler) GetProducts(w http.ResponseWriter, r *http.Request) {
 	utilities.SendPage(w, productList, page, limit, cnt)
 }
 
-// ===================Go routines and waitgroups added===================
+// ===================Go routines, waitgroups, mutex added===================
 
 // package product
 
@@ -54,6 +54,7 @@ func (h *Handler) GetProducts(w http.ResponseWriter, r *http.Request) {
 // )
 
 // var cnt int64
+// var mu sync.Mutex
 
 // func (h *Handler) GetProducts(w http.ResponseWriter, r *http.Request) {
 // 	// get query parameters
@@ -85,8 +86,11 @@ func (h *Handler) GetProducts(w http.ResponseWriter, r *http.Request) {
 // 	var wg sync.WaitGroup
 
 // 	wg.Add(1)
-// 	func() {
+// 	go func() {
 // 		defer wg.Done()
+
+// 		mu.Lock()
+// 		defer mu.Unlock()
 
 // 		cnt1, err := h.svc.Count()
 // 		if err != nil {
